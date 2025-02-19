@@ -19,19 +19,11 @@ Here’s the shortened and improved version of the "What’s Included" and "Why 
 ---
 
 ### What’s Included:
-- **100 SQL Practice Problems**: Extensive coverage of major SQL topics for mastering concepts with real-world data.
-- **20 Advanced SQL Queries**: Step-by-step solutions for complex queries, enhancing your skills in performance tuning and optimization.
+- **2s Advanced SQL Queries**: Step-by-step solutions for complex queries, enhancing your skills in performance tuning and optimization.
 - **5 Detailed Tables**: Comprehensive datasets with over 1 million rows, including sales, stores, product categories, products, and warranties.
 - **Query Performance Tuning**: Learn to optimize queries for real-world data handling.
 - **Portfolio-Ready Project**: Showcase your SQL expertise through large-scale data analysis.
 
-### Why Choose This Project?
-- **Hands-on Learning**: Practical experience with complex datasets and advanced business problem-solving.
-- **Comprehensive Coverage**: Each table provides new opportunities to explore SQL concepts.
-- **Exceptional Value**: For just **$9**, access 100 SQL problems, 20 advanced query solutions, and a real-world project.
-- **Limited Offer**: Special price available for the **first 100 students**!
-
-**Get the guided project/datasets here**: [Get the Project Datasets](https://topmate.io/zero_analyst/1237072)
 
 ## Database Schema
 
@@ -99,11 +91,12 @@ The project is split into three tiers of questions to test SQL skills of increas
 18. Calculate the correlation between product price and warranty claims for products sold in the last five years, segmented by price range.
 19. Identify the store with the highest percentage of "Paid Repaired" claims relative to total claims filed.
 20. Write a query to calculate the monthly running total of sales for each store over the past four years and compare trends during this period.
+ Analyze product sales trends over time, segmented into key periods: from launch to 6 months, 6-12 months, 12-18 months, and beyond 18 months.
 
-### Bonus Question
 
-- Analyze product sales trends over time, segmented into key periods: from launch to 6 months, 6-12 months, 12-18 months, and beyond 18 months.
 
+
+**Get the guided project/datasets here**: [Get the Project Datasets](https://topmate.io/zero_analyst/1237072)
 ## Project Focus
 
 This project primarily focuses on developing and showcasing the following SQL skills:
