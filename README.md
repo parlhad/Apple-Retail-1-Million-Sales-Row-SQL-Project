@@ -93,10 +93,146 @@ The project is split into three tiers of questions to test SQL skills of increas
 20. Write a query to calculate the monthly running total of sales for each store over the past four years and compare trends during this period.
  Analyze product sales trends over time, segmented into key periods: from launch to 6 months, 6-12 months, 12-18 months, and beyond 18 months.
 
+# Advanced SQL Queries Documentation
 
+![Apple Analysis](C:/Users/hp/Downloads/gettyimages-1240702737-594x594.jpg)
 
+## Medium to Advanced SQL Queries
 
-**Get the guided project/datasets here**: [Get the Project Datasets](https://topmate.io/zero_analyst/1237072)
+### **Q11: Identify the least selling product in each country for each year based on total units sold.**
+```sql
+WITH product_rank AS (
+    SELECT st.country, s.product_id, p.product_name, SUM(s.quantity) AS total_units_sold,
+           RANK() OVER(PARTITION BY st.country ORDER BY SUM(s.quantity)) AS RANK
+    FROM stores AS st
+    JOIN sales AS s ON st.store_id = s.store_id
+    JOIN products AS p ON p.product_id = s.product_id
+    GROUP BY st.country, s.product_id, p.product_name
+)
+SELECT * FROM product_rank WHERE RANK = 1;
+```
+
+### **Q12: Calculate how many warranty claims were filed within 180 days of a product sale.**
+```sql
+SELECT COUNT(w.claim_id)
+FROM sales AS s
+LEFT JOIN warranty AS w ON s.sale_id = w.sale_id
+WHERE sale_date - claim_date <= 180;
+```
+
+### **Q13: Determine how many warranty claims were filed for products launched in the last two years.**
+```sql
+SELECT p.product_name, COUNT(w.claim_id) AS NO_claims, COUNT(s.sale_id) AS NO_SOLD
+FROM warranty AS w
+RIGHT JOIN sales AS s ON s.sale_id = w.sale_id
+JOIN products AS p ON p.product_id = s.product_id
+WHERE p.launch_date >= CURRENT_DATE - INTERVAL '2 years'
+GROUP BY p.product_name
+HAVING COUNT(w.claim_id) > 0;
+```
+
+### **Q14: List the months in the last three years where sales exceeded 500 units in the USA.**
+```sql
+SELECT TO_CHAR(s.sale_date, 'MM-YYYY') AS month, SUM(s.quantity)
+FROM sales AS s
+JOIN stores AS st ON st.store_id = s.store_id
+WHERE st.country = 'USA' AND s.sale_date >= CURRENT_DATE - INTERVAL '3 years'
+GROUP BY sale_date
+HAVING SUM(s.quantity) > 500;
+```
+
+### **Q15: Identify the product category with the most warranty claims filed in the last two years.**
+```sql
+SELECT c.category_name, COUNT(w.claim_id) AS total_claims
+FROM warranty AS w
+LEFT JOIN sales AS s ON s.sale_id = w.sale_id
+JOIN products AS p ON p.product_id = s.product_id
+JOIN category AS c ON c.category_id = p.category_id
+WHERE w.claim_date >= CURRENT_DATE - INTERVAL '2 year'
+GROUP BY c.category_name;
+```
+
+### **Q16: Determine the percentage chance of receiving warranty claims after each purchase for each country.**
+```sql
+SELECT country, toatal_sale, total_claim,
+       COALESCE(toatal_sale :: NUMERIC / total_claim :: NUMERIC  * 100, 0) AS risk
+FROM (
+    SELECT st.country, SUM(quantity) AS toatal_sale, COUNT(w.claim_id) AS total_claim
+    FROM warranty AS w
+    LEFT JOIN sales AS s ON w.sale_id = s.sale_id
+    JOIN stores AS st ON st.store_id = s.store_id
+    GROUP BY st.country
+) t2
+ORDER BY risk DESC;
+```
+
+### **Q17: Analyze the year-by-year growth ratio for each store.**
+```sql
+WITH yearly_sales AS (
+    SELECT s.store_id, st.store_name, EXTRACT(YEAR FROM sale_date) AS year,
+           SUM(s.quantity * p.price) AS total_sale
+    FROM sales AS s
+    JOIN products AS p ON s.product_id = p.product_id
+    JOIN stores AS st ON st.store_id = s.store_id
+    GROUP BY s.store_id, EXTRACT(YEAR FROM sale_date), st.store_name
+),
+growth_ratio AS (
+    SELECT store_name, year,
+           LAG(total_sale, 1) OVER(PARTITION BY store_name ORDER BY year) AS last_year,
+           total_sale AS current_year
+    FROM yearly_sales
+)
+SELECT store_name, year, last_year, current_year,
+       ROUND((current_year - last_year) :: NUMERIC / last_year :: NUMERIC * 100 ,2) AS GROWTH_RATIO
+FROM growth_ratio
+WHERE last_year IS NOT NULL AND year <> EXTRACT(YEAR FROM CURRENT_DATE);
+```
+
+### **Q18: Calculate the correlation between product price and warranty claims for products sold in the last five years.**
+```sql
+SELECT 
+    CASE 
+        WHEN p.price < 500 THEN 'Less Expensive Product'
+        WHEN p.price BETWEEN 500 AND 1600 THEN 'Mid Range Product'
+        ELSE 'Expensive Product'
+    END AS price_range,
+    COUNT(w.claim_id) AS total_claim
+FROM warranty AS w
+LEFT JOIN sales AS s ON s.sale_id = w.sale_id
+LEFT JOIN products AS p ON s.product_id = p.product_id 
+WHERE w.claim_date >= CURRENT_DATE - INTERVAL '5 years' 
+GROUP BY price_range;
+```
+
+### **Q19: Identify the store with the highest percentage of "Repaired" claims relative to total claims filed.**
+```sql
+WITH total_repaired AS (
+    SELECT st.store_name, s.store_id, COUNT(w.claim_id) AS total_repaired
+    FROM warranty AS w
+    LEFT JOIN sales AS s ON s.sale_id = w.sale_id
+    JOIN stores AS st ON s.store_id = st.store_id
+    WHERE repair_status = 'Repaired'
+    GROUP BY st.store_name, s.store_id
+),
+claims_repair AS (
+    SELECT st.store_name, s.store_id, COUNT(w.claim_id) AS total_claims_for_repaired
+    FROM warranty AS w
+    LEFT JOIN sales AS s ON s.sale_id = w.sale_id
+    JOIN stores AS st ON s.store_id = st.store_id
+    GROUP BY st.store_name, s.store_id
+)
+SELECT tr.store_name, tr.store_id, tr.total_repaired, cr.total_claims_for_repaired,
+       ROUND(tr.total_repaired :: NUMERIC / cr.total_claims_for_repaired :: NUMERIC * 100,2) AS ratio_repaired
+FROM total_repaired AS tr
+JOIN claims_repair AS cr ON tr.store_id = cr.store_id;
+```
+
+---
+
+📌 **This document provides optimized SQL queries for advanced data analysis, ensuring performance and efficiency.**
+
+🔗 **For more details, visit our repository!**
+
 ## Project Focus
 
 This project primarily focuses on developing and showcasing the following SQL skills:
