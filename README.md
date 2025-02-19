@@ -10,7 +10,7 @@ The project is ideal for data analysts looking to enhance their SQL skills by wo
 
 ## Entity Relationship Diagram (ERD)
 
-![ERD](https://www.glassdoor.co.in/Photos/Apple-Office-Photos-IMG4028986_P3.htm)
+![ERD]("C:\Users\hp\Downloads\gettyimages-1240702737-594x594.jpg")
 
 **Get the guided project/datasets here**: [Get the Project Datasets](https://topmate.io/zero_analyst/1237072)
 
