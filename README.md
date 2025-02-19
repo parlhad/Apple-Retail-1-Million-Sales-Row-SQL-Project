@@ -26,7 +26,8 @@ Here’s the shortened and improved version of the "What’s Included" and "Why 
 
 # Advanced SQL Queries Documentation
 
-![Apple Analysis](APPLE OFFICE by Tram_ANH NGUYEN, via Behance.jpeg)
+![Apple Office](https://your-image-host.com/apple-office.jpeg)
+
 ## Database Schema
 
 The project uses five main tables:
