@@ -26,7 +26,7 @@ Here’s the shortened and improved version of the "What’s Included" and "Why 
 
 # Advanced SQL Queries Documentation
 
-![Apple Analysis](gettyimages-1240702737-594x594.jpg)
+![Apple Analysis](APPLE OFFICE by Tram_ANH NGUYEN, via Behance.jpeg)
 ## Database Schema
 
 The project uses five main tables:
@@ -239,7 +239,7 @@ ORDER BY store_id;
 
 # Advanced SQL Queries Documentation
 
-![Apple Analysis](C:/Users/hp/Downloads/gettyimages-1240702737-594x594.jpg)
+![Apple Analysis](APPLE OFFICE by Tram_ANH NGUYEN, via Behance.jpeg)
 
 ## Medium to Advanced SQL Queries
 
