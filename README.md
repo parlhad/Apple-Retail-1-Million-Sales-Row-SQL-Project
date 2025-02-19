@@ -10,7 +10,7 @@ The project is ideal for data analysts looking to enhance their SQL skills by wo
 
 ## Entity Relationship Diagram (ERD)
 
-![ERD](Screenshot 2025-02-16 160523.png)
+![ERD]("Screenshot 2025-02-16 160523.png")
 
 
 
