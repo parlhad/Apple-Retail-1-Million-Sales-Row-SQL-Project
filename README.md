@@ -26,7 +26,7 @@ Here’s the shortened and improved version of the "What’s Included" and "Why 
 
 # Advanced SQL Queries Documentation
 
-![Apple Office](https://your-image-host.com/apple-office.jpeg)
+![Apple Analysis](C:/Users/hp/Downloads/gettyimages-1240702737-594x594.jpg)
 
 ## Database Schema
 
