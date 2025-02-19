@@ -10,7 +10,9 @@ The project is ideal for data analysts looking to enhance their SQL skills by wo
 
 ## Entity Relationship Diagram (ERD)
 
-![ERD]("C:\Users\hp\OneDrive\Pictures\Screenshots\Screenshot 2025-02-18 214923.png")
+![Apple Analysis](C:/Users/hp/Downloads/gettyimages-1240702737-594x594.jpg)
+
+![Screenshot](C:/Users/hp/OneDrive/Pictures/Screenshots/Screenshot 2025-02-18 214923.png)
 
 
 
