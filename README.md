@@ -12,7 +12,7 @@ The project is ideal for data analysts looking to enhance their SQL skills by wo
 
 ![ERD]("C:\Users\hp\Downloads\gettyimages-1240702737-594x594.jpg")
 
-**Get the guided project/datasets here**: [Get the Project Datasets](https://topmate.io/zero_analyst/1237072)
+
 
 Here’s the shortened and improved version of the "What’s Included" and "Why Choose This Project" sections, along with the link:
 
