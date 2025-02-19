@@ -24,7 +24,9 @@ Here’s the shortened and improved version of the "What’s Included" and "Why 
 - **Query Performance Tuning**: Learn to optimize queries for real-world data handling.
 - **Portfolio-Ready Project**: Showcase your SQL expertise through large-scale data analysis.
 
+# Advanced SQL Queries Documentation
 
+![Apple Analysis](gettyimages-1240702737-594x594.jpg)
 ## Database Schema
 
 The project uses five main tables:
@@ -95,7 +97,7 @@ The project is split into three tiers of questions to test SQL skills of increas
 
 # Advanced SQL Queries Documentation
 
-![Apple Analysis](C:/Users/hp/Downloads/gettyimages-1240702737-594x594.jpg)
+![Apple Analysis](gettyimages-1240702737-594x594.jpg)
 
 ## Database Schema Setup
 
