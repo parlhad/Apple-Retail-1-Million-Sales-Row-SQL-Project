@@ -97,6 +97,148 @@ The project is split into three tiers of questions to test SQL skills of increas
 
 ![Apple Analysis](C:/Users/hp/Downloads/gettyimages-1240702737-594x594.jpg)
 
+## Database Schema Setup
+
+### **Create Tables**
+```sql
+CREATE TABLE stores(
+    store_id VARCHAR(5) PRIMARY KEY,
+    store_name VARCHAR(30),
+    city VARCHAR(25),
+    country VARCHAR(25)
+);
+
+CREATE TABLE category(
+    category_id VARCHAR(10) PRIMARY KEY,
+    category_name VARCHAR(20)
+);
+
+CREATE TABLE products(
+    product_id VARCHAR(10) PRIMARY KEY,
+    product_name VARCHAR(50),
+    category_id VARCHAR(10),
+    launch_date DATE,
+    price FLOAT,
+    CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category(category_id)
+);
+
+CREATE TABLE sales(
+    sale_id VARCHAR(15) PRIMARY KEY,
+    sale_date DATE,
+    store_id VARCHAR(10),
+    product_id VARCHAR(10),
+    quantity INT,
+    CONSTRAINT fk_store FOREIGN KEY (store_id) REFERENCES stores(store_id),
+    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+CREATE TABLE warranty(
+    claim_id VARCHAR(10) PRIMARY KEY,
+    sale_id VARCHAR(15),
+    claim_date DATE,
+    repair_status VARCHAR(15),
+    CONSTRAINT fk_orders FOREIGN KEY (sale_id) REFERENCES sales(sale_id)
+);
+```
+
+## Medium Level SQL Queries
+
+### **Q1: Find the number of stores in each country.**
+```sql
+SELECT country, COUNT(store_name) AS no_store
+FROM stores
+GROUP BY country
+ORDER BY no_store DESC;
+```
+
+### **Q2: Calculate the total number of units sold by each store.**
+```sql
+SELECT st.store_name, s.store_id, SUM(s.quantity) AS total_no_units_sold
+FROM stores AS st
+JOIN sales AS s ON st.store_id = s.store_id
+GROUP BY st.store_name, s.store_id
+ORDER BY total_no_units_sold DESC;
+```
+
+### **Q3: Identify how many sales occurred in December 2023.**
+```sql
+SELECT COUNT(sale_id) AS total_sale
+FROM sales
+WHERE TO_CHAR(sale_date, 'MM-YYYY') = '12-2023';
+```
+
+### **Q4: Determine how many stores have never had a warranty claim filed.**
+```sql
+SELECT COUNT(*) AS total_stores
+FROM stores
+WHERE store_id NOT IN (
+    SELECT DISTINCT store_id FROM sales AS s
+    RIGHT JOIN warranty AS w ON s.sale_id = w.sale_id
+);
+```
+
+### **Q5: Calculate the percentage of warranty claims marked as "REPLACED".**
+```sql
+SELECT ROUND(COUNT(claim_id) / (SELECT COUNT(*) FROM warranty) :: NUMERIC * 100, 2) AS Avg_Of_Replaced_claim
+FROM warranty
+WHERE repair_status = 'Replaced';
+```
+
+### **Q6: Identify which store had the highest total units sold in the last year.**
+```sql
+SELECT st.store_id, st.store_name, SUM(quantity) AS total_quantity_sold
+FROM sales AS s
+JOIN stores AS st ON s.store_id = st.store_id
+WHERE sale_date >= (CURRENT_DATE - INTERVAL '1 YEAR')
+GROUP BY st.store_id, st.store_name
+ORDER BY total_quantity_sold DESC LIMIT 1;
+```
+
+### **Q7: Count the number of unique products sold in the last year.**
+```sql
+SELECT COUNT(DISTINCT product_id) AS unique_products
+FROM sales
+WHERE sale_date >= (CURRENT_DATE - INTERVAL '1 YEAR');
+```
+
+### **Q8: Find the average price of products in each category.**
+```sql
+SELECT c.category_name, AVG(p.price) AS avg_price
+FROM products AS p
+JOIN category AS c ON c.category_id = p.category_id
+GROUP BY c.category_name;
+```
+
+### **Q9: How many warranty claims were filed in 2020?**
+```sql
+SELECT COUNT(claim_id)
+FROM warranty
+WHERE TO_CHAR(claim_date, 'YYYY') = '2020';
+```
+
+### **Q10: For each store, identify the best-selling day based on the highest quantity sold.**
+```sql
+WITH RankedSales AS (
+    SELECT store_id, sale_date AS best_selling_day,
+           SUM(quantity) AS highest_quantity_sold,
+           ROW_NUMBER() OVER (PARTITION BY store_id ORDER BY SUM(quantity) DESC) AS row_num
+    FROM sales
+    GROUP BY store_id, sale_date
+)
+SELECT store_id, best_selling_day, highest_quantity_sold
+FROM RankedSales
+WHERE row_num = 1
+ORDER BY store_id;
+```
+
+---
+
+
+
+# Advanced SQL Queries Documentation
+
+![Apple Analysis](C:/Users/hp/Downloads/gettyimages-1240702737-594x594.jpg)
+
 ## Medium to Advanced SQL Queries
 
 ### **Q11: Identify the least selling product in each country for each year based on total units sold.**
