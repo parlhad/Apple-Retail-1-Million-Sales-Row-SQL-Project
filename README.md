@@ -371,9 +371,157 @@ JOIN claims_repair AS cr ON tr.store_id = cr.store_id;
 
 ---
 
-📌 **This document provides optimized SQL queries for advanced data analysis, ensuring performance and efficiency.**
+# Advanced SQL Queries Documentation
+
+![Apple Analysis](C:/Users/hp/Downloads/gettyimages-1240702737-594x594.jpg)
+
+## Database Schema Setup
+
+### **Create Tables**
+```sql
+CREATE TABLE stores(
+    store_id VARCHAR(5) PRIMARY KEY,
+    store_name VARCHAR(30),
+    city VARCHAR(25),
+    country VARCHAR(25)
+);
+
+CREATE TABLE category(
+    category_id VARCHAR(10) PRIMARY KEY,
+    category_name VARCHAR(20)
+);
+
+CREATE TABLE products(
+    product_id VARCHAR(10) PRIMARY KEY,
+    product_name VARCHAR(50),
+    category_id VARCHAR(10),
+    launch_date DATE,
+    price FLOAT,
+    CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category(category_id)
+);
+
+CREATE TABLE sales(
+    sale_id VARCHAR(15) PRIMARY KEY,
+    sale_date DATE,
+    store_id VARCHAR(10),
+    product_id VARCHAR(10),
+    quantity INT,
+    CONSTRAINT fk_store FOREIGN KEY (store_id) REFERENCES stores(store_id),
+    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+CREATE TABLE warranty(
+    claim_id VARCHAR(10) PRIMARY KEY,
+    sale_id VARCHAR(15),
+    claim_date DATE,
+    repair_status VARCHAR(15),
+    CONSTRAINT fk_orders FOREIGN KEY (sale_id) REFERENCES sales(sale_id)
+);
+```
+
+## Medium Level SQL Queries
+
+### **Q1 - Q10: Medium Level Queries**
+
+[See Questions 1 to 10 Above]
+
+## Advanced Level SQL Queries
+
+### **Q20: Calculate the monthly running total of sales for each store over the past four years.**
+```sql
+WITH monthly_sales AS (
+    SELECT store_id, EXTRACT(YEAR FROM sale_date) AS year, EXTRACT(MONTH FROM sale_date) AS month,
+           SUM(p.price * s.quantity) AS total_revenue
+    FROM sales AS s
+    JOIN products AS p ON p.product_id = s.product_id
+    GROUP BY store_id, EXTRACT(YEAR FROM sale_date), month
+)
+SELECT store_id, year, month, total_revenue,
+       SUM(total_revenue) OVER(PARTITION BY store_id ORDER BY year, month) AS running_total
+FROM monthly_sales;
+```
+
+### **Q21: Analyze product sales trends segmented into key periods from launch.**
+```sql
+SELECT p.launch_date, p.product_name, s.sale_date, s.quantity,
+       CASE
+           WHEN s.sale_date < p.launch_date THEN 'Pre-order'
+           WHEN s.sale_date BETWEEN p.launch_date AND p.launch_date + INTERVAL '6 months' THEN '0-6 months'
+           WHEN s.sale_date BETWEEN p.launch_date + INTERVAL '6 months' AND p.launch_date + INTERVAL '12 months' THEN '6-12 months'
+           WHEN s.sale_date BETWEEN p.launch_date + INTERVAL '12 months' AND p.launch_date + INTERVAL '18 months' THEN '12-18 months'
+           ELSE '18+ months'
+       END AS sales_trend
+FROM sales AS s
+JOIN products AS p ON s.product_id = p.product_id;
+```
+
+### **Q22: Identify the top 3 best-selling products for each country in the last two years.**
+```sql
+WITH product_sales AS (
+    SELECT st.country, p.product_id, p.product_name, SUM(s.quantity) AS total_units_sold,
+           RANK() OVER(PARTITION BY st.country ORDER BY SUM(s.quantity) DESC) AS rank
+    FROM sales AS s
+    JOIN stores AS st ON st.store_id = s.store_id
+    JOIN products AS p ON p.product_id = s.product_id
+    WHERE s.sale_date >= CURRENT_DATE - INTERVAL '2 years'
+    GROUP BY st.country, p.product_id, p.product_name
+)
+SELECT * FROM product_sales WHERE rank <= 3;
+```
+
+### **Q23: Find stores where sales have dropped for 3 consecutive months.**
+```sql
+WITH sales_trend AS (
+    SELECT s.store_id, st.store_name, TO_CHAR(s.sale_date, 'YYYY-MM') AS sale_month,
+           SUM(s.quantity) AS total_units_sold,
+           LAG(SUM(s.quantity), 1) OVER(PARTITION BY s.store_id ORDER BY TO_CHAR(s.sale_date, 'YYYY-MM')) AS last_month,
+           LAG(SUM(s.quantity), 2) OVER(PARTITION BY s.store_id ORDER BY TO_CHAR(s.sale_date, 'YYYY-MM')) AS two_months_ago
+    FROM sales AS s
+    JOIN stores AS st ON st.store_id = s.store_id
+    GROUP BY s.store_id, st.store_name, TO_CHAR(s.sale_date, 'YYYY-MM')
+)
+SELECT store_id, store_name, sale_month, total_units_sold
+FROM sales_trend
+WHERE total_units_sold < last_month AND last_month < two_months_ago;
+```
+
+### **Q24: Calculate the average time between a product sale and a warranty claim.**
+```sql
+SELECT p.product_name, ROUND(AVG(w.claim_date - s.sale_date), 2) AS avg_days_to_claim
+FROM warranty AS w
+JOIN sales AS s ON s.sale_id = w.sale_id
+JOIN products AS p ON s.product_id = p.product_id
+WHERE w.claim_date IS NOT NULL
+GROUP BY p.product_name
+ORDER BY avg_days_to_claim DESC;
+```
+
+### **Q25: Identify stores with unusually low warranty claims compared to total sales.**
+```sql
+WITH store_sales AS (
+    SELECT s.store_id, COUNT(s.sale_id) AS total_sales
+    FROM sales AS s
+    GROUP BY s.store_id
+),
+store_claims AS (
+    SELECT s.store_id, COUNT(w.claim_id) AS total_claims
+    FROM warranty AS w
+    JOIN sales AS s ON w.sale_id = s.sale_id
+    GROUP BY s.store_id
+)
+SELECT ss.store_id, ss.total_sales, COALESCE(sc.total_claims, 0) AS total_claims,
+       ROUND((COALESCE(sc.total_claims, 0) * 100.0 / NULLIF(ss.total_sales, 0)), 2) AS claim_rate
+FROM store_sales ss
+LEFT JOIN store_claims sc ON ss.store_id = sc.store_id
+ORDER BY claim_rate ASC;
+```
+
+---
+
+📌 **This document provides optimized SQL queries for database setup, medium, and advanced-level analysis.**
 
 🔗 **For more details, visit our repository!**
+
 
 ## Project Focus
 
